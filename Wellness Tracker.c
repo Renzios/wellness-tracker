@@ -1,335 +1,453 @@
-// Wellness Tracker
-
 #include <stdio.h>
 
-int getTimeEnd(int nDay, int nTimeStart);
-int getCategory(int nDay, int nTimeStart);
-int getDuration(int nTimeStart, int nTimeEnd);
-int isCorrect(int nCategory, int nDuration);
-void addDuration(int nCategory, int nDuration, int *nHealth, int *nLeisure, int *nWork, int *nChores, int *nSelf, int *nHelping, int *nFamily, int *nRest, int *nSleep, int *nEating,
-					int *nTotalHealth, int *nTotalLeisure, int *nTotalWork, int *nTotalChores, int *nTotalSelf, int *nTotalHelping, int *nTotalFamily, int *nTotalRest, int *nTotalSleep, int *nTotalEating);
-int isContinue();
-
-int main()
-{	
-	int nIsContinue;
-
-	int nTimeStart = 0;
-	
-	int nHealth = 0;
-	int nLeisure = 0;
-	int nWork = 0;
-	int nChores = 0;
-	int nSelf = 0;
-	int nHelping = 0;
-	int nFamily = 0;
-	int nRest = 0;
-	int nSleep = 0;
-	int nEating = 0;
-	
-	int nTotalHealth = 0;
-	int nTotalLeisure = 0;
-	int nTotalWork = 0;
-	int nTotalChores = 0;
-	int nTotalSelf = 0;
-	int nTotalHelping = 0;
-	int nTotalFamily = 0;
-	int nTotalRest = 0;
-	int nTotalSleep = 0;
-	int nTotalEating = 0;
-	
-	int nDay = 1;
-	
-	do
-	{	
-		// Get Time End
-		int nTimeEnd = getTimeEnd(nDay, nTimeStart);
-			
-		// Get Category
-		int nCategory = getCategory(nDay, nTimeStart);
-		
-		// Get Duration
-		int nDuration = getDuration(nTimeStart, nTimeEnd);
-		
-		// Is Correct
-		if (isCorrect(nCategory, nDuration))
-		{
-			nTimeStart = nTimeEnd;
-			addDuration(nCategory, nDuration, &nHealth, &nLeisure, &nWork, &nChores, &nSelf, &nHelping, &nFamily, &nRest, &nSleep, &nEating,
-						&nTotalHealth, &nTotalLeisure, &nTotalWork, &nTotalChores, &nTotalSelf, &nTotalHelping, &nTotalFamily, &nTotalRest, &nTotalSleep, &nTotalEating);
-						
-			if (nTimeEnd > nTimeStart)
-			{	
-				nIsContinue = 1;		
-			}
-			else
-			{
-				// Display statistics
-				
-				// Add remaining time
-				nDuration = nTimeEnd;
-				addDuration(nCategory, nDuration, &nHealth, &nLeisure, &nWork, &nChores, &nSelf, &nHelping, &nFamily, &nRest, &nSleep, &nEating,
-							&nTotalHealth, &nTotalLeisure, &nTotalWork, &nTotalChores, &nTotalSelf, &nTotalHelping, &nTotalFamily, &nTotalRest, &nTotalSleep, &nTotalEating);
-				
-				nIsContinue = isContinue();
-				nDay++;
-			}
-			
-			
-		}
-		else
-		{
-			printf("Input ignored\n\n");
-			
-			nIsContinue = 1;
-		}
-		
-	} while (nIsContinue);
-	
-	printf("Program End\n");
-	
-	return 0;
-}
-
-int getTimeEnd(int nDay, int nTimeStart)
+int getTimeEnd(int dTimeStart, int dDay)
 {
-	int nTimeEnd;
+	int dTimeEnd;
 	
-	do
+	// loops if invalid input
+	do 
 	{
-		if (nDay == 1 && !nTimeStart)
+		if (dTimeStart != 0)
 		{
-			printf("What time did you wake up? [0000 - 2359]\n\n");
+			printf("What time did the next activity end? (0000-2359) ");
+			scanf("%d", &dTimeEnd);	
 		}
-		else
+		else if (!dTimeStart && dDay == 1)
 		{
-			printf("What time did the next activity end? [0000 - 2359]\n\n");
+			printf("What time did you wake up? (0000-2359) ");
+			scanf("%d", &dTimeEnd);
 		}
 		
-		printf("Enter time: ");
-		scanf("%d", &nTimeEnd);
-		printf("\n");
-		
-		if (nTimeEnd < 0 || nTimeEnd > 2359 || nTimeEnd % 100 > 59)
+		if (dTimeEnd < 0 || dTimeEnd >= 2400 || dTimeEnd % 100 >= 60)
 		{
-			printf("Invalid time\n\n");
-		}
-	} while (nTimeEnd < 0 || nTimeEnd > 2359 || nTimeEnd % 100 > 59);
-	
-	return nTimeEnd / 100 * 60 + nTimeEnd % 100;
-}
-
-int getCategory(int nDay, int nTimeStart)
-{
-	int nCategory;
-	
-	do
-	{
-		if (nDay == 1 && !nTimeStart)
-		{
-			nCategory = 9;
-		}
-		else
-		{
-			printf("Category of Activities\n\n");
-			
-			printf("\t[1] Health\n\n");
-			
-			printf("\t[2] Leisure\n\n");
-			
-			printf("\t[3] Work\n\n");
-			
-			printf("\t[4] Chores\n\n");
-			
-			printf("\t[5] Self-Improvement\n\n");
-			
-			printf("\t[6] Helping Others\n\n");
-			
-			printf("\t[7] Family\n\n");
-			
-			printf("\t[8] Rest\n\n");
-			
-			printf("\t[9] Sleep\n\n");
-			
-			printf("\t[10] Eating\n\n");
-			
-			printf("Enter category: ");
-			scanf("%d", &nCategory);
-			printf("\n");
-		}
-		
-		if (nCategory < 1 || nCategory > 10)
-		{
-			printf("Invalid category\n\n");
-		}
-	} while (nCategory < 1 || nCategory > 10);
-	
-	return nCategory;
-}
-
-int getDuration(int nTimeStart, int nTimeEnd)
-{
-	int nDuration;
-	
-	if (nTimeEnd > nTimeStart)
-	{
-		nDuration = nTimeEnd - nTimeStart;
+			printf("ERROR! Please input again.\n");
+		}	
 	}
-	else
+	while (dTimeEnd < 0 || dTimeEnd >= 2400 || dTimeEnd % 100 >= 60);
+	
+	// return Time End as minutes
+	return dTimeEnd / 100 * 60 + (dTimeEnd % 100);
+}
+
+int getCategory(int dTimeStart, int dDay)
+{
+	int dCategory;
+	
+	if (dTimeStart != 0)
 	{
-		nDuration = 1440 - nTimeStart;
+		printf("CATEGORY OF ACTIVITIES\n");
+		printf("[1] Health\n");
+		printf("[2] Leisure\n");
+		printf("[3] Work\n");
+		printf("[4] Chores\n");
+		printf("[5] Self-Improvement\n");
+		printf("[6] Helping Others\n");
+		printf("[7] Family\n");
+		printf("[8] Rest\n");
+		printf("[9] Sleep\n");
+		printf("[10] Eating\n");
+		printf("What activity did you do? ");
+		scanf("%d", &dCategory);
+	}
+	else if (!dTimeStart && dDay == 1)
+	{
+		dCategory = 9; // Assume user is sleeping on the first day
 	}
 	
-	return nDuration;
+	return dCategory;
 }
 
-int isCorrect(int nCategory, int nDuration)
+int getContinue()
 {
-	int nIsCorrect;
+	int dContinue;
 	
-	if (nCategory != 9 && nDuration > 300)
-	{
-		char cOption;
-		
-		do
-		{
-			printf("This activity lasts for more than 3 hours. Is this correct?\n\n");
-			
-			printf("[Y] Yes\n\n");
-			
-			printf("[N] No\n\n");
-			
-			printf("Enter option: ");
-			scanf(" %c", &cOption);
-			printf("\n");
-			
-			switch (cOption)
-			{
-				case 'Y':
-				
-				case 'y':
-					nIsCorrect = 1;
-					break;
-					
-				case 'N':
-					
-				case 'n':
-					nIsCorrect = 0;
-					break;
-					
-				default:
-					printf("Invalid Option\n\n");
-					break;	
-			}
-		} while (cOption != 'Y' && cOption != 'y' && cOption != 'N' && cOption != 'n');
-	}
-	else
-	{
-		nIsCorrect = 1;
-	}
+	printf("Do you want to continue using this Wellness Tracker? (0 - No / 1 - Yes) ");
+	scanf("%d", &dContinue);		
 	
-	return nIsCorrect;
+	return dContinue;
 }
 
-void addDuration(int nCategory, int nDuration, int *nHealth, int *nLeisure, int *nWork, int *nChores, int *nSelf, int *nHelping, int *nFamily, int *nRest, int *nSleep, int *nEating,
-					int *nTotalHealth, int *nTotalLeisure, int *nTotalWork, int *nTotalChores, int *nTotalSelf, int *nTotalHelping, int *nTotalFamily, int *nTotalRest, int *nTotalSleep, int *nTotalEating)
+void addDuration(int dCategory, int dDuration, int* dPreviousHealth, int* dPreviousLeisure, int* dPreviousWork, int* dPreviousChores, int* dPreviousSelf, int* dPreviousHelping, int* dPreviousFamily, int* dPreviousRest, int* dPreviousSleep, int* dPreviousEating, int* dTotalHealth, int* dTotalLeisure, int* dTotalWork, int* dTotalChores, int* dTotalSelf, int* dTotalHelping, int* dTotalFamily, int* dTotalRest, int* dTotalSleep, int* dTotalEating)
 {
-	switch (nCategory)
+	switch (dCategory)
 	{
 		case 1:
-			*nHealth += nDuration;
-			*nTotalHealth += nDuration;
+			*dPreviousHealth += dDuration;
+			*dTotalHealth += dDuration;
+			break;
+				
+		case 2: 
+			*dPreviousLeisure += dDuration;
+			*dTotalLeisure += dDuration;
+			break;
+				
+		case 3: 
+			*dPreviousWork += dDuration;
+			*dTotalWork += dDuration;
+			break;
+				
+		case 4: 
+			*dPreviousChores += dDuration;		
+			*dTotalChores += dDuration;
 			break;
 			
-		case 2:
-			*nLeisure += nDuration;
-			*nTotalLeisure += nDuration;
-			break;
-			
-		case 3:
-			*nWork += nDuration;
-			*nTotalWork += nDuration;
-			break;
-			
-		case 4:
-			*nChores += nDuration;
-			*nTotalChores += nDuration;
-			break;
-			
-		case 5:
-			*nSelf += nDuration;
-			*nTotalSelf += nDuration;
+		case 5: 
+			*dPreviousSelf += dDuration;
+			*dTotalSelf += dDuration;
 			break;
 			
 		case 6:
-			*nHelping += nDuration;
-			*nTotalHelping += nDuration;
+			*dPreviousHelping += dDuration;
+			*dTotalHelping += dDuration;
 			break;
 			
 		case 7:
-			*nFamily += nDuration;
-			*nTotalFamily += nDuration;
+			*dPreviousFamily += dDuration;
+			*dTotalFamily += dDuration;
 			break;
 			
 		case 8:
-			*nRest += nDuration;
-			*nTotalRest += nDuration;
+			*dPreviousRest += dDuration;
+			*dTotalRest += dDuration;
 			break;
 			
 		case 9:
-			*nSleep += nDuration;
-			*nTotalSleep += nDuration;
+			*dPreviousSleep += dDuration;	
+			*dTotalSleep += dDuration;
 			break;
 			
 		case 10:
-			*nEating += nDuration;
-			*nTotalEating += nDuration;
-			break;
+			*dPreviousEating += dDuration;
+			*dTotalEating += dDuration;
+			break;				
 	}
 }
 
-void displayStatistics(int nDay, int *nHealth, int *nLeisure, int *nWork, int *nChores, int *nSelf, int *nHelping, int *nFamily, int *nRest, int *nSleep, int *nEating)
-{
-	
+void sortTimeSpent(int* dA, int* dB)
+{	
+	if (*dA < *dB)
+	{
+		int dTemp = *dA;
+		*dA = *dB;
+		*dB = dTemp;
+	}
 }
 
-int isContinue()
-{
-	int nIsContinue;
-	
-	char cOption;
-	
-	do
+void printStatistics(int* isPrintedH, int* isPrintedL, int* isPrintedW, int* isPrintedC, int* isPrintedS, int* isPrintedHelp, int* isPrintedF, int* isPrintedR, int* isPrintedSleep, int* isPrintedE, int dDay, int a, int* dPreviousHealth, int* dPreviousLeisure, int* dPreviousWork, int* dPreviousChores, int* dPreviousSelf, int* dPreviousHelping, int* dPreviousFamily, int* dPreviousRest, int* dPreviousSleep, int* dPreviousEating)
+{	
+	if (*dPreviousHealth == a && *isPrintedH != 1)
 	{
-		printf("Would you like to continue using the program for this new day?\n\n");
-		
-		printf("[Y] Yes\n\n");
-		
-		printf("[N] No\n\n");
-		
-		printf("Enter option: ");
-		scanf(" %c", &cOption);
-		printf("\n");
-		
-		switch (cOption)
-		{
-			case 'Y':
-			
-			case 'y':
-				nIsContinue = 1;
-				break;
-				
-			case 'N':
-				
-			case 'n':
-				nIsContinue = 0;
-				break;
-				
-			default:
-				printf("Invalid Option\n\n");
-				break;	
-		}
-	} while (cOption != 'Y' && cOption != 'y' && cOption != 'N' && cOption != 'n');
+		printf("          Health | %02dh %02dm | %6.2f%%\n", a / 60, a % 60, a / (14.4 * dDay)); 
+		*isPrintedH = 1;
+	}
+	else if (*dPreviousLeisure == a && *isPrintedL != 1)
+	{
+		printf("         Leisure | %02dh %02dm | %6.2f%%\n", a / 60, a % 60, a / (14.4 * dDay));
+		*isPrintedL = 1;
+	}	
+	else if (*dPreviousWork == a && *isPrintedW != 1 )
+	{
+		printf("            Work | %02dh %02dm | %6.2f%%\n", a / 60, a % 60, a / (14.4 * dDay));
+		*isPrintedW = 1;
+	}
+	else if (*dPreviousChores == a && *isPrintedC != 1)
+	{
+		printf("          Chores | %02dh %02dm | %6.2f%%\n", a / 60, a % 60, a / (14.4 * dDay));
+		*isPrintedC = 1;
+	}	
+	else if (*dPreviousSelf == a && *isPrintedS != 1)
+	{
+		printf("Self-Improvement | %02dh %02dm | %6.2f%%\n", a / 60, a % 60, a / (14.4 * dDay));
+		*isPrintedS = 1;
+	}
+	else if (*dPreviousHelping == a && *isPrintedHelp != 1)
+	{
+		printf("  Helping Others | %02dh %02dm | %6.2f%%\n", a / 60, a % 60, a / (14.4 * dDay));
+		*isPrintedHelp = 1;
+	}	
+	else if (*dPreviousFamily == a && *isPrintedF != 1)
+	{
+		printf("          Family | %02dh %02dm | %6.2f%%\n", a / 60, a % 60, a / (14.4 * dDay));
+		*isPrintedF = 1;
+	}	
+	else if (*dPreviousRest == a && *isPrintedR != 1)
+	{
+		printf("            Rest | %02dh %02dm | %6.2f%%\n", a / 60, a % 60, a / (14.4 * dDay));
+		*isPrintedR = 1;
+	}	
+	else if (*dPreviousSleep == a && *isPrintedSleep != 1)
+	{
+		printf("           Sleep | %02dh %02dm | %6.2f%%\n", a / 60, a % 60, a / (14.4 * dDay));
+		*isPrintedSleep = 1;
+	}	
+	else if (*dPreviousEating == a && *isPrintedE != 1)
+	{
+		printf("          Eating | %02dh %02dm | %6.2f%%\n", a / 60, a % 60, a / (14.4 * dDay));
+		*isPrintedH = 0;
+		*isPrintedL = 0;
+		*isPrintedW = 0;
+		*isPrintedC = 0;
+		*isPrintedS = 0;
+		*isPrintedHelp = 0;
+		*isPrintedF = 0;
+		*isPrintedR = 0;
+		*isPrintedSleep = 0;
+		*isPrintedE = 0;
+	}		
+}
+
+void displayPreviousDayStatistics(int dDay, int* dPreviousHealth, int* dPreviousLeisure, int* dPreviousWork, int* dPreviousChores, int* dPreviousSelf, int* dPreviousHelping, int* dPreviousFamily, int* dPreviousRest, int* dPreviousSleep, int* dPreviousEating)
+{
+	int x;
+	int dFirst = *dPreviousHealth;
+	int dSecond = *dPreviousLeisure;
+	int dThird = *dPreviousWork;
+	int dFourth = *dPreviousChores;
+	int dFifth = *dPreviousSelf;
+	int dSixth = *dPreviousHelping;
+	int dSeventh = *dPreviousFamily;
+	int dEight = *dPreviousRest;
+	int dNinth = *dPreviousSleep;
+	int dTenth = *dPreviousEating;
 	
-	return nIsContinue;
+	int isPrintedH = 0, isPrintedL = 0, isPrintedW = 0, isPrintedC = 0, isPrintedS = 0, isPrintedHelp = 0, isPrintedF = 0, isPrintedR = 0, isPrintedSleep = 0, isPrintedE = 0;
+	dDay = 1;
+	
+	for (x = 1; x < 10; x++)
+	{
+		sortTimeSpent(&dFirst, &dSecond);
+		sortTimeSpent(&dSecond, &dThird);
+		sortTimeSpent(&dThird, &dFourth);
+		sortTimeSpent(&dFourth, &dFifth);
+		sortTimeSpent(&dFifth, &dSixth);
+		sortTimeSpent(&dSixth, &dSeventh);
+		sortTimeSpent(&dSeventh, &dEight);
+		sortTimeSpent(&dEight, &dNinth);
+		sortTimeSpent(&dNinth, &dTenth);
+	}
+	
+	printf("\n");
+	printf("PREVIOUS DAY'S STATISTICS\n");
+	printf("CATEGORY         | DURATION| PERCENTAGE\n");
+	printStatistics(&isPrintedH, &isPrintedL, &isPrintedW, &isPrintedC, &isPrintedS, &isPrintedHelp, &isPrintedF, &isPrintedR, &isPrintedSleep, &isPrintedE, dDay, dFirst, dPreviousHealth, dPreviousLeisure, dPreviousWork, dPreviousChores, dPreviousSelf, dPreviousHelping, dPreviousFamily, dPreviousRest, dPreviousSleep, dPreviousEating);
+	printStatistics(&isPrintedH, &isPrintedL, &isPrintedW, &isPrintedC, &isPrintedS, &isPrintedHelp, &isPrintedF, &isPrintedR, &isPrintedSleep, &isPrintedE, dDay, dSecond, dPreviousHealth, dPreviousLeisure, dPreviousWork, dPreviousChores, dPreviousSelf, dPreviousHelping, dPreviousFamily, dPreviousRest, dPreviousSleep, dPreviousEating);
+	printStatistics(&isPrintedH, &isPrintedL, &isPrintedW, &isPrintedC, &isPrintedS, &isPrintedHelp, &isPrintedF, &isPrintedR, &isPrintedSleep, &isPrintedE, dDay, dThird, dPreviousHealth, dPreviousLeisure, dPreviousWork, dPreviousChores, dPreviousSelf, dPreviousHelping, dPreviousFamily, dPreviousRest, dPreviousSleep, dPreviousEating);
+	printStatistics(&isPrintedH, &isPrintedL, &isPrintedW, &isPrintedC, &isPrintedS, &isPrintedHelp, &isPrintedF, &isPrintedR, &isPrintedSleep, &isPrintedE, dDay, dFourth, dPreviousHealth, dPreviousLeisure, dPreviousWork, dPreviousChores, dPreviousSelf, dPreviousHelping, dPreviousFamily, dPreviousRest, dPreviousSleep, dPreviousEating);
+	printStatistics(&isPrintedH, &isPrintedL, &isPrintedW, &isPrintedC, &isPrintedS, &isPrintedHelp, &isPrintedF, &isPrintedR, &isPrintedSleep, &isPrintedE, dDay, dFifth, dPreviousHealth, dPreviousLeisure, dPreviousWork, dPreviousChores, dPreviousSelf, dPreviousHelping, dPreviousFamily, dPreviousRest, dPreviousSleep, dPreviousEating);
+	printStatistics(&isPrintedH, &isPrintedL, &isPrintedW, &isPrintedC, &isPrintedS, &isPrintedHelp, &isPrintedF, &isPrintedR, &isPrintedSleep, &isPrintedE, dDay, dSixth, dPreviousHealth, dPreviousLeisure, dPreviousWork, dPreviousChores, dPreviousSelf, dPreviousHelping, dPreviousFamily, dPreviousRest, dPreviousSleep, dPreviousEating);
+	printStatistics(&isPrintedH, &isPrintedL, &isPrintedW, &isPrintedC, &isPrintedS, &isPrintedHelp, &isPrintedF, &isPrintedR, &isPrintedSleep, &isPrintedE, dDay, dSeventh, dPreviousHealth, dPreviousLeisure, dPreviousWork, dPreviousChores, dPreviousSelf, dPreviousHelping, dPreviousFamily, dPreviousRest, dPreviousSleep, dPreviousEating);
+	printStatistics(&isPrintedH, &isPrintedL, &isPrintedW, &isPrintedC, &isPrintedS, &isPrintedHelp, &isPrintedF, &isPrintedR, &isPrintedSleep, &isPrintedE, dDay, dEight, dPreviousHealth, dPreviousLeisure, dPreviousWork, dPreviousChores, dPreviousSelf, dPreviousHelping, dPreviousFamily, dPreviousRest, dPreviousSleep, dPreviousEating);
+	printStatistics(&isPrintedH, &isPrintedL, &isPrintedW, &isPrintedC, &isPrintedS, &isPrintedHelp, &isPrintedF, &isPrintedR, &isPrintedSleep, &isPrintedE, dDay, dNinth, dPreviousHealth, dPreviousLeisure, dPreviousWork, dPreviousChores, dPreviousSelf, dPreviousHelping, dPreviousFamily, dPreviousRest, dPreviousSleep, dPreviousEating);
+	printStatistics(&isPrintedH, &isPrintedL, &isPrintedW, &isPrintedC, &isPrintedS, &isPrintedHelp, &isPrintedF, &isPrintedR, &isPrintedSleep, &isPrintedE, dDay, dTenth, dPreviousHealth, dPreviousLeisure, dPreviousWork, dPreviousChores, dPreviousSelf, dPreviousHelping, dPreviousFamily, dPreviousRest, dPreviousSleep, dPreviousEating);
+	printf("\n");
+		
+	*dPreviousHealth = 0;
+	*dPreviousLeisure = 0;
+	*dPreviousWork = 0;
+	*dPreviousChores = 0;
+	*dPreviousSelf = 0;
+	*dPreviousHelping = 0;
+	*dPreviousFamily = 0;
+	*dPreviousRest = 0;
+	*dPreviousSleep = 0;
+	*dPreviousEating = 0;
+}
+
+void displayTotalStatistics(int dDay, int* dTotalHealth, int* dTotalLeisure, int* dTotalWork, int* dTotalChores, int* dTotalSelf, int* dTotalHelping, int* dTotalFamily, int* dTotalRest, int* dTotalSleep, int* dTotalEating)
+{
+	int x;
+	int dFirst = *dTotalHealth;
+	int dSecond = *dTotalLeisure;
+	int dThird = *dTotalWork;
+	int dFourth = *dTotalChores;
+	int dFifth = *dTotalSelf;
+	int dSixth = *dTotalHelping;
+	int dSeventh = *dTotalFamily;
+	int dEight = *dTotalRest;
+	int dNinth = *dTotalSleep;
+	int dTenth = *dTotalEating;
+	
+	int isPrintedH = 0, isPrintedL = 0, isPrintedW = 0, isPrintedC = 0, isPrintedS = 0, isPrintedHelp = 0, isPrintedF = 0, isPrintedR = 0, isPrintedSleep = 0, isPrintedE = 0;
+	
+	for (x = 1; x < 10; x++)
+	{
+		sortTimeSpent(&dFirst, &dSecond);
+		sortTimeSpent(&dSecond, &dThird);
+		sortTimeSpent(&dThird, &dFourth);
+		sortTimeSpent(&dFourth, &dFifth);
+		sortTimeSpent(&dFifth, &dSixth);
+		sortTimeSpent(&dSixth, &dSeventh);
+		sortTimeSpent(&dSeventh, &dEight);
+		sortTimeSpent(&dEight, &dNinth);
+		sortTimeSpent(&dNinth, &dTenth);
+	}
+	
+	printf("------------------------------------------------------------------------------------------------------------------------\n");
+	printf("TOTAL STATISTICS\n");
+	printStatistics(&isPrintedH, &isPrintedL, &isPrintedW, &isPrintedC, &isPrintedS, &isPrintedHelp, &isPrintedF, &isPrintedR, &isPrintedSleep, &isPrintedE, dDay, dFirst, dTotalHealth, dTotalLeisure, dTotalWork, dTotalChores, dTotalSelf, dTotalHelping, dTotalFamily, dTotalRest, dTotalSleep, dTotalEating);
+	printStatistics(&isPrintedH, &isPrintedL, &isPrintedW, &isPrintedC, &isPrintedS, &isPrintedHelp, &isPrintedF, &isPrintedR, &isPrintedSleep, &isPrintedE, dDay, dSecond, dTotalHealth, dTotalLeisure, dTotalWork, dTotalChores, dTotalSelf, dTotalHelping, dTotalFamily, dTotalRest, dTotalSleep, dTotalEating);
+	printStatistics(&isPrintedH, &isPrintedL, &isPrintedW, &isPrintedC, &isPrintedS, &isPrintedHelp, &isPrintedF, &isPrintedR, &isPrintedSleep, &isPrintedE, dDay, dThird, dTotalHealth, dTotalLeisure, dTotalWork, dTotalChores, dTotalSelf, dTotalHelping, dTotalFamily, dTotalRest, dTotalSleep, dTotalEating);
+	printStatistics(&isPrintedH, &isPrintedL, &isPrintedW, &isPrintedC, &isPrintedS, &isPrintedHelp, &isPrintedF, &isPrintedR, &isPrintedSleep, &isPrintedE, dDay, dFourth, dTotalHealth, dTotalLeisure, dTotalWork, dTotalChores, dTotalSelf, dTotalHelping, dTotalFamily, dTotalRest, dTotalSleep, dTotalEating);
+	printStatistics(&isPrintedH, &isPrintedL, &isPrintedW, &isPrintedC, &isPrintedS, &isPrintedHelp, &isPrintedF, &isPrintedR, &isPrintedSleep, &isPrintedE, dDay, dFifth, dTotalHealth, dTotalLeisure, dTotalWork, dTotalChores, dTotalSelf, dTotalHelping, dTotalFamily, dTotalRest, dTotalSleep, dTotalEating);
+	printStatistics(&isPrintedH, &isPrintedL, &isPrintedW, &isPrintedC, &isPrintedS, &isPrintedHelp, &isPrintedF, &isPrintedR, &isPrintedSleep, &isPrintedE, dDay, dSixth, dTotalHealth, dTotalLeisure, dTotalWork, dTotalChores, dTotalSelf, dTotalHelping, dTotalFamily, dTotalRest, dTotalSleep, dTotalEating);
+	printStatistics(&isPrintedH, &isPrintedL, &isPrintedW, &isPrintedC, &isPrintedS, &isPrintedHelp, &isPrintedF, &isPrintedR, &isPrintedSleep, &isPrintedE, dDay, dSeventh, dTotalHealth, dTotalLeisure, dTotalWork, dTotalChores, dTotalSelf, dTotalHelping, dTotalFamily, dTotalRest, dTotalSleep, dTotalEating);
+	printStatistics(&isPrintedH, &isPrintedL, &isPrintedW, &isPrintedC, &isPrintedS, &isPrintedHelp, &isPrintedF, &isPrintedR, &isPrintedSleep, &isPrintedE, dDay, dEight, dTotalHealth, dTotalLeisure, dTotalWork, dTotalChores, dTotalSelf, dTotalHelping, dTotalFamily, dTotalRest, dTotalSleep, dTotalEating);
+	printStatistics(&isPrintedH, &isPrintedL, &isPrintedW, &isPrintedC, &isPrintedS, &isPrintedHelp, &isPrintedF, &isPrintedR, &isPrintedSleep, &isPrintedE, dDay, dNinth, dTotalHealth, dTotalLeisure, dTotalWork, dTotalChores, dTotalSelf, dTotalHelping, dTotalFamily, dTotalRest, dTotalSleep, dTotalEating);
+	printStatistics(&isPrintedH, &isPrintedL, &isPrintedW, &isPrintedC, &isPrintedS, &isPrintedHelp, &isPrintedF, &isPrintedR, &isPrintedSleep, &isPrintedE, dDay, dTenth, dTotalHealth, dTotalLeisure, dTotalWork, dTotalChores, dTotalSelf, dTotalHelping, dTotalFamily, dTotalRest, dTotalSleep, dTotalEating);
+	printf("------------------------------------------------------------------------------------------------------------------------\n");
+}
+
+main()
+{
+	int dTimeEnd, dTimeStart = 0000;
+	int dCategory;
+	int dDuration;
+	int dCorrect;
+	int dDay = 1;
+	int dContinue = 1;
+	int isFirstActivity = 1;
+	
+	int dPreviousHealth = 0, dPreviousLeisure = 0, dPreviousWork = 0, dPreviousChores = 0, dPreviousSelf = 0, dPreviousHelping = 0, dPreviousFamily = 0, dPreviousRest = 0, dPreviousSleep = 0, dPreviousEating = 0;
+	int dTotalHealth = 0, dTotalLeisure = 0, dTotalWork = 0, dTotalChores = 0, dTotalSelf = 0, dTotalHelping = 0, dTotalFamily = 0, dTotalRest = 0, dTotalSleep = 0, dTotalEating = 0;
+	
+	printf("------------------------------------------------------------------------------------------------------------------------\n");
+	printf("WELLNESS TRACKER\n");
+	printf("An Individual-only Machine Project for CCPROG1\n");
+	printf("Programmed by Lorenzo Nery\n");
+	printf("------------------------------------------------------------------------------------------------------------------------\n");
+	
+	while (dContinue)
+	{	
+		// GET TIME END
+		dTimeEnd = getTimeEnd(dTimeStart, dDay);
+
+		// GET CATEGORY
+		do
+		{
+			dCategory = getCategory(dTimeStart, dDay);
+			
+			if(dCategory < 1 || dCategory > 10)
+				printf("ERROR! Please input again.\n");
+		} while (dCategory < 1 || dCategory > 10);	
+		
+		// DURATION
+		if (dTimeEnd > dTimeStart)
+		{
+			dDuration = dTimeEnd - dTimeStart;
+			
+			if (dDuration > 180 && dCategory != 9)
+			{
+				do
+				{
+					printf("This activity lasts for more than 3 hours. Are you sure? (0 - No / 1 - Yes) ");
+					scanf("%d", &dCorrect);
+					
+					if(dCorrect == 0 || dCorrect == 1)
+					{
+						if(dCorrect == 1)
+						{
+							
+							dTimeStart = dTimeEnd;
+							addDuration(dCategory, dDuration, &dPreviousHealth, &dPreviousLeisure, &dPreviousWork, &dPreviousChores, &dPreviousSelf, &dPreviousHelping, &dPreviousFamily, &dPreviousRest, &dPreviousSleep, &dPreviousEating, &dTotalHealth, &dTotalLeisure, &dTotalWork, &dTotalChores, &dTotalSelf, &dTotalHelping, &dTotalFamily, &dTotalRest, &dTotalSleep, &dTotalEating);
+							dCorrect = 0;
+						}
+						else
+						{
+							printf("Please input the time end and the category of the activity again.\n"); // INPUT TIME END AND CATEGORY AGAIN
+						}
+					}
+					else
+					{
+						printf("ERROR! Please input again.\n"); // INPUT CORRECT AGAIN
+					}	
+				} while (dCorrect);
+			}
+			else
+			{
+				dTimeStart = dTimeEnd;
+				addDuration(dCategory, dDuration, &dPreviousHealth, &dPreviousLeisure, &dPreviousWork, &dPreviousChores, &dPreviousSelf, &dPreviousHelping, &dPreviousFamily, &dPreviousRest, &dPreviousSleep, &dPreviousEating, &dTotalHealth, &dTotalLeisure, &dTotalWork, &dTotalChores, &dTotalSelf, &dTotalHelping, &dTotalFamily, &dTotalRest, &dTotalSleep, &dTotalEating);
+			}
+		}
+		else
+		{
+			dDuration = 1440 - dTimeStart;
+			
+			if(dDuration > 180 && dCategory != 9)
+			{
+				do
+				{
+					printf("This activity lasts for more than 3 hours. Are you sure? (0 - No / 1 - Yes) ");
+					scanf("%d", &dCorrect);
+					
+					if(dCorrect == 0 || dCorrect == 1)
+					{
+						if(dCorrect == 1)
+						{
+							
+							dTimeStart = dTimeEnd;
+							addDuration(dCategory, dDuration, &dPreviousHealth, &dPreviousLeisure, &dPreviousWork, &dPreviousChores, &dPreviousSelf, &dPreviousHelping, &dPreviousFamily, &dPreviousRest, &dPreviousSleep, &dPreviousEating, &dTotalHealth, &dTotalLeisure, &dTotalWork, &dTotalChores, &dTotalSelf, &dTotalHelping, &dTotalFamily, &dTotalRest, &dTotalSleep, &dTotalEating);
+							
+							displayPreviousDayStatistics(dDay, &dPreviousHealth, &dPreviousLeisure, &dPreviousWork, &dPreviousChores, &dPreviousSelf, &dPreviousHelping, &dPreviousFamily, &dPreviousRest, &dPreviousSleep, &dPreviousEating);
+							
+							dDuration = dTimeEnd; // ADD REMAINING TIME OF LAST ACTIVITY
+							
+							if(dDay > 1)
+							{
+								displayTotalStatistics(dDay, &dTotalHealth, &dTotalLeisure, &dTotalWork, &dTotalChores, &dTotalSelf, &dTotalHelping, &dTotalFamily, &dTotalRest, &dTotalSleep, &dTotalEating);
+							}
+								
+							dDay++;
+							
+							addDuration(dCategory, dDuration, &dPreviousHealth, &dPreviousLeisure, &dPreviousWork, &dPreviousChores, &dPreviousSelf, &dPreviousHelping, &dPreviousFamily, &dPreviousRest, &dPreviousSleep, &dPreviousEating, &dTotalHealth, &dTotalLeisure, &dTotalWork, &dTotalChores, &dTotalSelf, &dTotalHelping, &dTotalFamily, &dTotalRest, &dTotalSleep, &dTotalEating);
+							
+							do
+							{
+								dContinue = getContinue();
+			
+								if(dContinue != 0 && dContinue != 1)
+									printf("ERROR! Please input again.\n");
+							} while (dContinue != 0 && dContinue != 1);
+							dCorrect = 0;
+						}
+						else
+						{
+							printf("Please input the time end and the category of the activity again.\n"); // INPUT TIME END AND CATEGORY AGAIN
+						}
+					}
+					else
+					{
+						printf("ERROR! Please input again.\n"); // INPUT CORRECT AGAIN
+					}
+				} while (dCorrect);
+			}
+			else
+			{
+				dTimeStart = dTimeEnd;
+				addDuration(dCategory, dDuration, &dPreviousHealth, &dPreviousLeisure, &dPreviousWork, &dPreviousChores, &dPreviousSelf, &dPreviousHelping, &dPreviousFamily, &dPreviousRest, &dPreviousSleep, &dPreviousEating, &dTotalHealth, &dTotalLeisure, &dTotalWork, &dTotalChores, &dTotalSelf, &dTotalHelping, &dTotalFamily, &dTotalRest, &dTotalSleep, &dTotalEating);
+				
+				displayPreviousDayStatistics(dDay, &dPreviousHealth, &dPreviousLeisure, &dPreviousWork, &dPreviousChores, &dPreviousSelf, &dPreviousHelping, &dPreviousFamily, &dPreviousRest, &dPreviousSleep, &dPreviousEating);
+				
+				dDuration = dTimeEnd; // ADD REMAINING TIME OF LAST ACTIVITY
+				
+				if(dDay > 1)
+				{
+					displayTotalStatistics(dDay, &dTotalHealth, &dTotalLeisure, &dTotalWork, &dTotalChores, &dTotalSelf, &dTotalHelping, &dTotalFamily, &dTotalRest, &dTotalSleep, &dTotalEating);
+				}
+					
+				dDay++;
+				
+				addDuration(dCategory, dDuration, &dPreviousHealth, &dPreviousLeisure, &dPreviousWork, &dPreviousChores, &dPreviousSelf, &dPreviousHelping, &dPreviousFamily, &dPreviousRest, &dPreviousSleep, &dPreviousEating, &dTotalHealth, &dTotalLeisure, &dTotalWork, &dTotalChores, &dTotalSelf, &dTotalHelping, &dTotalFamily, &dTotalRest, &dTotalSleep, &dTotalEating);
+				
+				do
+				{
+					dContinue = getContinue();
+			
+					if(dContinue != 0 && dContinue != 1)
+						printf("ERROR! Please input again.\n");
+				} while (dContinue != 0 && dContinue != 1);
+			}
+		}
+	}
+	
+	printf("THANK YOU FOR TESTING THIS WELLNESS TRACKER!");		
 }
