@@ -73,6 +73,7 @@ int isCorrect()
 {
 	int dCorrect;
 	
+	// Loop until user enters a valid option
 	do
 	{
 		printf("This activity lasts for more than 3 hours. Is this correct?\n\n");
@@ -352,12 +353,18 @@ void displayTotalStatistics(int dDay, int* dTotalHealth, int* dTotalLeisure, int
 
 int main()
 {
-	int dTimeEnd, dTimeStart = 0000;
+	// Declare variables
 	int dCategory;
 	int dDuration;
-	int dDay = 1;
-	int dContinue = 1;
+	int dContinue;
 	
+	// Declare time end and time start and initialize time start to 0
+	int dTimeEnd, dTimeStart = 0;
+	
+	// Declare and initialize day to 1
+	int dDay = 1;
+	
+	// Declare and initialize all time spent on categories to 0
 	int dPreviousHealth = 0, dPreviousLeisure = 0, dPreviousWork = 0, dPreviousChores = 0, dPreviousSelf = 0, dPreviousHelping = 0, dPreviousFamily = 0, dPreviousRest = 0, dPreviousSleep = 0, dPreviousEating = 0;
 	int dTotalHealth = 0, dTotalLeisure = 0, dTotalWork = 0, dTotalChores = 0, dTotalSelf = 0, dTotalHelping = 0, dTotalFamily = 0, dTotalRest = 0, dTotalSleep = 0, dTotalEating = 0;
 	
@@ -372,17 +379,22 @@ int main()
 		// Get Category
 		dCategory = getCategory(dTimeStart, dDay);
 		
+		// Activity does not go past midnight
 		if (dTimeEnd > dTimeStart)
 		{
+			// Get duration
 			dDuration = dTimeEnd - dTimeStart;
 			
+			// Duration is greater than 3 hours
 			if (dDuration > 180 && dCategory != 9)
 			{
-				// Error handling for activities lasting more than 3 hours that is not sleep
+				// Input is correct according to the user
 				if(isCorrect())
 				{
+					// Add duration to its category
 					addDuration(dCategory, dDuration, &dPreviousHealth, &dPreviousLeisure, &dPreviousWork, &dPreviousChores, &dPreviousSelf, &dPreviousHelping, &dPreviousFamily, &dPreviousRest, &dPreviousSleep, &dPreviousEating, &dTotalHealth, &dTotalLeisure, &dTotalWork, &dTotalChores, &dTotalSelf, &dTotalHelping, &dTotalFamily, &dTotalRest, &dTotalSleep, &dTotalEating);
 					
+					// Set the time start of the next activity to the last activity's time end
 					dTimeStart = dTimeEnd;
 				}
 				else
@@ -392,65 +404,87 @@ int main()
 			}
 			else
 			{
+				// Add duration to its category
 				addDuration(dCategory, dDuration, &dPreviousHealth, &dPreviousLeisure, &dPreviousWork, &dPreviousChores, &dPreviousSelf, &dPreviousHelping, &dPreviousFamily, &dPreviousRest, &dPreviousSleep, &dPreviousEating, &dTotalHealth, &dTotalLeisure, &dTotalWork, &dTotalChores, &dTotalSelf, &dTotalHelping, &dTotalFamily, &dTotalRest, &dTotalSleep, &dTotalEating);
-			
+				
+				// Set the time start of the next activity to the last activity's time end
 				dTimeStart = dTimeEnd;
 			}
+			
+			// Loop again because the day has not ended
+			dContinue = 1;
 		}
 		else
 		{
+			// Get duration
 			dDuration = 1440 - dTimeStart + dTimeEnd;
 			
+			// Duration is greater than 3 hours
 			if(dDuration > 180 && dCategory != 9)
 			{	
-				// Error handling for activities lasting more than 3 hours that is not sleep
+				// Input is correct according to the user
 				if(isCorrect())
 				{
+					// Add the time spent on the activity before midnight
 					addDuration(dCategory, dDuration - dTimeEnd, &dPreviousHealth, &dPreviousLeisure, &dPreviousWork, &dPreviousChores, &dPreviousSelf, &dPreviousHelping, &dPreviousFamily, &dPreviousRest, &dPreviousSleep, &dPreviousEating, &dTotalHealth, &dTotalLeisure, &dTotalWork, &dTotalChores, &dTotalSelf, &dTotalHelping, &dTotalFamily, &dTotalRest, &dTotalSleep, &dTotalEating);
-						
+					
+					// Display the previous day statistics from greatest to least	
 					displayPreviousDayStatistics(&dPreviousHealth, &dPreviousLeisure, &dPreviousWork, &dPreviousChores, &dPreviousSelf, &dPreviousHelping, &dPreviousFamily, &dPreviousRest, &dPreviousSleep, &dPreviousEating);
-							
+					
+					// Display the total statistics if it is day 2 and beyond		
 					if(dDay > 1)
 					{
 						displayTotalStatistics(dDay, &dTotalHealth, &dTotalLeisure, &dTotalWork, &dTotalChores, &dTotalSelf, &dTotalHelping, &dTotalFamily, &dTotalRest, &dTotalSleep, &dTotalEating);
 					}
-							
+					
+					// Next day	
 					dDay++;
-							
+					
+					// Add the remaining time spent on the activity after midnight		
 					addDuration(dCategory, dTimeEnd, &dPreviousHealth, &dPreviousLeisure, &dPreviousWork, &dPreviousChores, &dPreviousSelf, &dPreviousHelping, &dPreviousFamily, &dPreviousRest, &dPreviousSleep, &dPreviousEating, &dTotalHealth, &dTotalLeisure, &dTotalWork, &dTotalChores, &dTotalSelf, &dTotalHelping, &dTotalFamily, &dTotalRest, &dTotalSleep, &dTotalEating);
-							
+					
+					// Get continue	
 					dContinue = getContinue();
 					
+					// Set the time start of the next activity to the last activity's time end 
 					dTimeStart = dTimeEnd;
 				}
 				else
 				{
 					printf("Input ignored, input again\n\n");
+					
+					// Loop again since the input was ignored and the day has not ended
+					dContinue = 1;
 				}
 			}
 			else
 			{
+				// Add the time spent on the activity before midnight
 				addDuration(dCategory, dDuration - dTimeEnd, &dPreviousHealth, &dPreviousLeisure, &dPreviousWork, &dPreviousChores, &dPreviousSelf, &dPreviousHelping, &dPreviousFamily, &dPreviousRest, &dPreviousSleep, &dPreviousEating, &dTotalHealth, &dTotalLeisure, &dTotalWork, &dTotalChores, &dTotalSelf, &dTotalHelping, &dTotalFamily, &dTotalRest, &dTotalSleep, &dTotalEating);
 				
+				// Display the previous day statistics from greatest to least	
 				displayPreviousDayStatistics(&dPreviousHealth, &dPreviousLeisure, &dPreviousWork, &dPreviousChores, &dPreviousSelf, &dPreviousHelping, &dPreviousFamily, &dPreviousRest, &dPreviousSleep, &dPreviousEating);
 				
+				// Display the total statistics if it is day 2 and beyond
 				if(dDay > 1)
 				{
 					displayTotalStatistics(dDay, &dTotalHealth, &dTotalLeisure, &dTotalWork, &dTotalChores, &dTotalSelf, &dTotalHelping, &dTotalFamily, &dTotalRest, &dTotalSleep, &dTotalEating);
 				}
-					
+				
+				// Next day
 				dDay++;
 				
+				// Add the remaining time spent on the activity after midnight
 				addDuration(dCategory, dTimeEnd, &dPreviousHealth, &dPreviousLeisure, &dPreviousWork, &dPreviousChores, &dPreviousSelf, &dPreviousHelping, &dPreviousFamily, &dPreviousRest, &dPreviousSleep, &dPreviousEating, &dTotalHealth, &dTotalLeisure, &dTotalWork, &dTotalChores, &dTotalSelf, &dTotalHelping, &dTotalFamily, &dTotalRest, &dTotalSleep, &dTotalEating);
 				
+				// Get continue
 				dContinue = getContinue();
 				
+				// Set the time start of the next activity to the last activity's time end 
 				dTimeStart = dTimeEnd;
 			}
 		}
-	} while (dContinue);
-	
-	printf("Thank you!\n");		
+	} while (dContinue);		
 	
 	return 0;
 }
